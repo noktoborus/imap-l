@@ -46,6 +46,7 @@ struct mimap
 	struct mimap_query *qlast;
 };
 
+/* input recv buffer */
 void mimap_ (struct mimap *mimap, const char *buffer, size_t bfsz);
 /* query LOGIN to server */
 void mimap_login (struct mimap *mimap, const char *login, const char *secret);

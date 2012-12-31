@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <stdbool.h>
+#include "milex.h"
 
 #define MIMAP_BLSZ 4096
 #define MIMAP_ACTIVE 0x1 /* connection established */
@@ -33,6 +34,8 @@ struct mimap_query
 	size_t query_sz;
 	size_t response_fl;
 	size_t response_sz;
+	/* parser struct */
+	struct milex lex;
 	/* link to next node */
 	struct mimap_query *next;
 };

@@ -3,6 +3,8 @@
  */
 #include "mimap.h"
 
+#define LEX_BLSZ 128
+
 void
 mimap_ (struct mimap *mimap, const char *buffer, size_t bfsz)
 {

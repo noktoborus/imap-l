@@ -6,6 +6,17 @@
 void
 mimap_ (struct mimap *mimap, const char *buffer, size_t bfsz)
 {
+	if (!mimap || mimap->status & MIMAP_CLOSE)
+		return;
+	if (bfsz == 0)
+	{
+		mimap->status |= MIMAP_CLOSE;
+		return;
+	}
+	if (!buffer)
+		return;
+	//
+
 }
 
 void

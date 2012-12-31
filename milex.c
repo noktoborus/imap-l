@@ -6,5 +6,9 @@
 void
 milex_next (struct milex *lex, char *buffer, size_t bfsz)
 {
+	if (!lex || !buffer)
+		return;
+	if (bfsz == 0 && (lex->state == MILEX_PROC)
+		lex->state = MILEX_OK;
 }
 

@@ -32,7 +32,7 @@ milex_next (struct milex *restrict lex, const char *restrict buffer, size_t bfsz
 		{
 			if (buffer[i] == '"')
 			{
-				if (lex->_clt_fl >= 1 && lex->_clt[lex->_clt_fl - 1] == '\\')
+				if (lex->_clt_fl > 0 && lex->_clt[lex->_clt_fl - 1] == '\\')
 				{
 					lex->_clt[lex->_clt_fl - 1] = '"';
 				}

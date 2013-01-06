@@ -7,7 +7,7 @@ void
 milex_parse (struct milex *lex)
 {
 	register size_t i;
-	if (!lex->_clt_sz)
+	if (!lex->_clt_fl)
 		return;
 	/* TODO */
 }
@@ -32,11 +32,17 @@ milex_next (struct milex *restrict lex, const char *restrict buffer, size_t bfsz
 		{
 			if (buffer[i] == '"')
 			{
-				// TODO: need detect '\"'
-				if (lex->_clt_st == MILEX_C_QUOTE)
-					lex->_clt_st = MILEX_C_MIXED;
+				if (lex->_clt_fl >= 1 && lex->_clt[lex->_clt_fl - 1] == '\\')
+				{
+					lex->_clt[lex->_clt_fl - 1] = '"';
+				}
 				else
-					lex->_clt_st = MILEX_C_QUOTE;
+				{
+					if (lex->_clt_st == MILEX_C_QUOTE)
+						lex->_clt_st = MILEX_C_MIXED;
+					else
+						lex->_clt_st = MILEX_C_QUOTE;
+				}
 			}
 			else
 			{

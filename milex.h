@@ -16,11 +16,12 @@
 #define MILEX_T_NONE   0x0
 #define MILEX_T_STRING 0x1
 #define MILEX_T_UINT   0x2
-#define MILEX_T_SINT   0x3
 #define MILEX_T_LIST   0x4
 /* collect states */
 #define MILEX_C_NONE   0x0
 #define MILEX_C_QUOTE  0x1
+#define MILEX_C_MIXED  0x2
+#define MILEX_C_INT    0x3
 
 struct milex_value
 {
@@ -30,8 +31,7 @@ struct milex_value
 	{
 		struct milex_value *list;
 		char *vstring;
-		unsigned int vuint;
-		int vint;
+		uint32_t vint;
 	} value;
 };
 

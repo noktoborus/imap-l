@@ -4,6 +4,8 @@
 #ifndef _MILEX_1356959206_H_
 #define _MILEX_1356959206_H_
 
+#define MILEX_BFSZ 128
+
 #define MILEX_PROC 0x0
 #define MILEX_FAIL 0x1
 #define MILEX_OK   0x2
@@ -16,6 +18,9 @@
 #define MILEX_T_UINT   0x2
 #define MILEX_T_SINT   0x3
 #define MILEX_T_LIST   0x4
+/* collect states */
+#define MILEX_C_NONE   0x0
+#define MILEX_C_QUOTE  0x1
 
 struct milex_value
 {
@@ -32,11 +37,12 @@ struct milex_value
 
 struct milex
 {
-	char *_crnt;
-	size_t _crnt_fl;
-	size_t _crnt_sz;
+	char *_clt; // collect buffer
+	size_t _clt_fl;
+	size_t _clt_sz;
 	struct milex_value value;
 	uint8_t state;
+	uint8_t _clt_st; // collect state
 };
 
 /* \r, \n and bfsz == 0 match as EOL */

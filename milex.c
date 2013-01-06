@@ -57,6 +57,8 @@ milex_next (struct milex *restrict lex, const char *restrict buffer, size_t bfsz
 		lex->_clt[lex->clt_fl] = '\0';
 		lex->state |= MILEX_OK;
 		milex_parse (lex);
+		if (!(lex->state & MILEX_FAIL))
+			lex->state = MILEX_PROC;
 	}
 }
 

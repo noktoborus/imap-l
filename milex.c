@@ -9,6 +9,21 @@ milex_parse (struct milex *lex)
 	register size_t i;
 	if (!lex->_clt_fl)
 		return;
+	switch (lex->_clt_st)
+	{
+		case MILEX_C_INT:
+			lex->value.type = MILEX_T_UINT;
+			lex->value.value.vint = strtoul (lex->_clt_st, NULL, 10);
+			break;
+		case MILEX_C_MIXED:
+			break;
+		case MILEX_C_QUOTE:
+			// TODO: exception
+			break;
+		default:
+			// type = _NONE, check nil, string, magic word
+			break;
+	}
 	/* TODO */
 }
 

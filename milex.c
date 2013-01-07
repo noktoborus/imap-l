@@ -7,13 +7,15 @@ void
 milex_parse (struct milex *lex)
 {
 	register size_t i;
+	// TODO: need find current node (for lists, full
+	struct milex_value *cval &(lex->value);
 	if (!lex->_clt_fl)
 		return;
 	switch (lex->_clt_st)
 	{
 		case MILEX_C_INT:
-			lex->value.type = MILEX_T_UINT;
-			lex->value.value.vint = strtoul (lex->_clt_st, NULL, 10);
+			cvla->type = MILEX_T_UINT;
+			cval->value.vint = strtoul (lex->_clt_st, NULL, 10);
 			break;
 		case MILEX_C_MIXED:
 			break;
@@ -22,6 +24,10 @@ milex_parse (struct milex *lex)
 			break;
 		default:
 			// type = _NONE, check nil, string, magic word
+			if (lex->_clt_fl == 3 && !memcmp ((void*)lex->_clt, (void*)"NIL", 3))
+			{
+				cval->type = MILEX_T_NULL;
+			}
 			break;
 	}
 	/* TODO */

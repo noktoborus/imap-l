@@ -14,6 +14,7 @@
 #define MILEX_FAIL_PARSE    0x8
 /* types */
 #define MILEX_T_NONE   0x0
+#define MILEX_T_NULL   0x0
 #define MILEX_T_STRING 0x1
 #define MILEX_T_UINT   0x2
 #define MILEX_T_LIST   0x4

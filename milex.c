@@ -9,36 +9,35 @@ milex_parse (struct milex *lex)
 	register size_t i;
 	// TODO: need find current node (for lists, full
 	struct milex_value *cval &(lex->value);
-	if (!lex->_clt_fl)
-		return;
 	switch (lex->_clt_st)
 	{
 		case MILEX_C_INT:
+			if (!lex->_clt_fl)
+				break;
 			cvla->type = MILEX_T_UINT;
-			cval->value.vint = strtoul (lex->_clt_st, NULL, 10);
+			cval->value.vint = strtoul (lex->_clt, NULL, 10);
 			break;
 		case MILEX_C_MIXED:
+			// type = _NONE, check nil, string, magic word
+			if (lex->clt_fl == 0 || (lex->_clt_fl == 3 && !memcmp ((void*)lex->_clt, (void*)"NIL", 3)))
+				cval->type = MILEX_T_NULL;
+			else
+				cval->type = MILEX_T_STRING;
 			break;
 		case MILEX_C_QUOTE:
 			// TODO: exception
 			break;
 		default:
-			// type = _NONE, check nil, string, magic word
-			if (lex->_clt_fl == 3 && !memcmp ((void*)lex->_clt, (void*)"NIL", 3))
-			{
-				cval->type = MILEX_T_NULL;
-			}
 			break;
 	}
-	/* TODO */
 }
 
-void
+size_t
 milex_next (struct milex *restrict lex, const char *restrict buffer, size_t bfsz)
 {
 	register size_t i = 0;
 	if (!lex || !buffer)
-		return;
+		return 0;
 	if (bfsz == 0 && (lex->state == MILEX_PROC))
 		lex->state = MILEX_EOL | MILEX_OK;
 	for (; i < bfsz; i ++)
@@ -92,5 +91,6 @@ milex_next (struct milex *restrict lex, const char *restrict buffer, size_t bfsz
 		milex_parse (lex);
 		lex->state = MILEX_PROC;
 	}
+	return i;
 }
 

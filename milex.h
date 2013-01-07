@@ -47,7 +47,7 @@ struct milex
 };
 
 /* \r, \n and bfsz == 0 match as EOL */
-void milex_next (struct milex * restrict lex, const char * restrict buffer, size_t bfsz);
+size_t milex_next (struct milex * restrict lex, const char * restrict buffer, size_t bfsz);
 
 #endif /* _MILEX_1356959206_H_ */
 

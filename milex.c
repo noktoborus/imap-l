@@ -6,6 +6,7 @@
 void
 milex_parse (struct milex *lex)
 {
+	/*
 	register size_t i;
 	// TODO: need find current node (for lists, full
 	struct milex_value *cval &(lex->value);
@@ -30,66 +31,128 @@ milex_parse (struct milex *lex)
 		default:
 			break;
 	}
+	*/
 }
 
 size_t
 milex_next (struct milex *restrict lex, const char *restrict buffer, size_t bfsz)
 {
-	register size_t i = 0;
+	register size_t i;
 	if (!lex || !buffer)
 		return 0;
 	if (bfsz == 0 && (lex->state == MILEX_PROC))
-		lex->state = MILEX_EOL | MILEX_OK;
-	for (; i < bfsz; i ++)
+		lex->state = MILEX_EOL;
+	for (i = 0; i < bfsz && !(lex->state & (MILEX_EOL | MILEX_FAIL)); i ++)
 	{
-		if (buffer[i] == '\n' || buffer[i] == '\r' || (buffer[i] == ' ' && lex->_clt_st != MILEX_C_QUOTE))
+		switch (buffer[i])
 		{
-			if (buffer[i] != ' ')
-				lex->state |= MILEX_EOL;
-			break;
-		}
-		else
-		{
-			if (buffer[i] == '"')
-			{
+			case '\n':
+				lex->state = MILEX_OK | MILEX_EOL;
+				break;
+			case '"':
+				// skip if already in another quotes (lists, ...)
+				if (lex->state != MILEX_PROC || lex->state != MILEX_QUOTE)
+					break;
 				if (lex->_clt_fl > 0 && lex->_clt[lex->_clt_fl - 1] == '\\')
 				{
 					lex->_clt[lex->_clt_fl - 1] = '"';
 				}
 				else
+				if (lex->state == MILEX_QUOTE)
+					lex->state = MILEX_PROC;
+				else
+					lex->state = MILEX_QUOTE;
+				break;
+			case '[':
+				switch (lex->state)
 				{
-					if (lex->_clt_st == MILEX_C_QUOTE)
-						lex->_clt_st = MILEX_C_MIXED;
-					else
-						lex->_clt_st = MILEX_C_QUOTE;
+					case MILEX_PROC:
+						if (lex->_clt_fl > 0)
+						{
+							lex->state = MILEX_OK;
+							i --;
+						}
+						else
+							lex->state = MILEX_TUPLE;
+						break;
+					case MILEX_TUPLE:
+						lex->_clt_qcc ++;
+						break;
 				}
-			}
-			else
-			{
-				// append new char
-				if (lex->_clt_sz <= lex->_clt_fl + 1)
+				break;
+			case '(':
+				switch (lex->state)
 				{
-					char *tmp = realloc (lex->_clt, lex->_clt_sz + MILEX_BFSZ);
+					case MILEX_PROC:
+						if (lex->_clt_fl > 0)
+						{
+							// finalize previous node
+							lex->state = MILEX_OK;
+							i --;
+						}
+						else
+							lex->state = MILEX_LIST;
+						break;
+					case MILEX_LIST:
+						lex->_clt_qcc ++;
+						break;
+				}
+				break;
+			case ']':
+				if (lex->state == MILEX_TUPLE)
+				{
+					if (lex->_clt_qcc > 0)
+						lex->_clt_qcc --;
+					else
+					{
+						lex->state = MILEX_OK;
+						lex->_clt_type = MILEX_C_TUPLE;
+					}
+				}
+				break;
+			case ')':
+				if (lex->state == MILEX_LIST)
+				{
+					if (lex->_clt_qcc > 0)
+						lex->_clt_qcc --;
+					else
+					{
+						lex->state = MILEX_OK;
+						lex->_clt_type = MILEX_C_LIST;
+					}
+				}
+				break;
+			default:
+				if (lex->_clt_fl + 2 > lex->_clt_sz)
+				{
+					char *tmp;
+					// resize
+					tmp = realloc ((void*)lex->_clt, lex->_clt_sz + MILEX_BFSZ);
 					if (!tmp)
 					{
-						lex->state = MILEX_FAIL | MILEX_FAIL_INTERNAL;
+						lex->state = MILEX_FAIL;
 						break;
 					}
 					lex->_clt = tmp;
-					lex->_clt_sz += MILEX_BFSZ;
 				}
-				if (lex->_clt_st == MILEX_C_NONE && (buffer[i] >= '0' && buffer[i] <= '9'))
-					lex->_clt_st = MILEX_C_INT;
-				lex->_clt[lex->_clt_fl++] = buffer[i];
-			}
+				// append
+				lex->_clt[lex->_clt_fl ++] = buffer[i];
+				lex->_clt[lex->_clt_fl] = '\0';
+				// check for integer
+				if (lex->state == MILEX_PROC && (buffer[i] >= '0' && buffer[i] <= '9'))
+					lex->_clt_type = MILEX_C_INT;
+				else
+				if (lex->_clt_type == MILEX_C_INT && (buffer[i] < '0' || buffer[i] > '9'))
+					lex->_clt_type = MILEX_C_MIXED;
+				break;
 		}
-	}
-	if (!(lex->state & MILEX_FAIL))
-	{
-		lex->_clt[lex->clt_fl] = '\0';
-		lex->state |= MILEX_OK;
-		milex_parse (lex);
-		lex->state = MILEX_PROC;
+		if (lex->state & MILEX_OK)
+		{
+			if (lex->_clt_type == MILEX_C_NONE && lex->_clt_fl > 0)
+				lex->_clt_type = MILEX_C_MIXED;
+			milex_parse (lex);
+			lex->_clt_type = MILEX_C_NONE;
+		}
 	}
 	return i;
 }

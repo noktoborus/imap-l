@@ -17,7 +17,6 @@
 #define MILEX_LIST  0x10
 #define MILEX_TUPLE 0x20
 /* types */
-#define MILEX_T_NONE   0x0
 #define MILEX_T_NULL   0x0
 #define MILEX_T_STRING 0x1
 #define MILEX_T_UINT   0x2
@@ -43,11 +42,13 @@ struct milex_value
 
 struct milex
 {
+	struct milex_value *valast; // pointer to last node
 	char *_clt; // collect buffer
 	size_t _clt_fl;
 	size_t _clt_sz;
 	struct milex_value value;
 	uint8_t state;
+	// TODO: remove _clt_type, use state for detect type (MILEX_LIST | MILEX_OK as example)
 	uint8_t _clt_type; // collect type
 	uint8_t _clt_qcc; // depth count (for '[', '(')
 };

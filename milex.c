@@ -6,32 +6,41 @@
 void
 milex_parse (struct milex *lex)
 {
-	/*
 	register size_t i;
-	// TODO: need find current node (for lists, full
-	struct milex_value *cval &(lex->value);
-	switch (lex->_clt_st)
+	// TODO: set lex->valast
+	switch (lex->_clt_type)
 	{
 		case MILEX_C_INT:
 			if (!lex->_clt_fl)
 				break;
-			cvla->type = MILEX_T_UINT;
-			cval->value.vint = strtoul (lex->_clt, NULL, 10);
+			lex->valast->type = MILEX_T_UINT;
+			lex->valast->type = stroul (lex->_clt, NULL, 10);
 			break;
 		case MILEX_C_MIXED:
-			// type = _NONE, check nil, string, magic word
-			if (lex->clt_fl == 0 || (lex->_clt_fl == 3 && !memcmp ((void*)lex->_clt, (void*)"NIL", 3)))
-				cval->type = MILEX_T_NULL;
-			else
-				cval->type = MILEX_T_STRING;
+			// check NIL (None)
 			break;
 		case MILEX_C_QUOTE:
-			// TODO: exception
+			// must trow exception
 			break;
-		default:
+		case MILEX_C_TUPLE:
+			// check NULL "[]"
+			if (!lex->_clt_fl)
+				lex->valast->type = MILEX_T_NULL;
+			else
+			{
+				// TODO: recursive to milex_next
+			}
+			break;
+		case MILEX_C_LIST:
+			// check NULL "()"
+			if (!lex->_clt_fl)
+				lex->valast->type = MILEX_T_NULL;
+			else
+			{
+				// TODO: recursive to milex_next
+			}
 			break;
 	}
-	*/
 }
 
 size_t

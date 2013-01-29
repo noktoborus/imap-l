@@ -14,13 +14,10 @@ milex_parse (struct milex *lex)
 			if (!lex->_clt_fl)
 				break;
 			lex->valast->type = MILEX_T_UINT;
-			lex->valast->type = stroul (lex->_clt, NULL, 10);
+			lex->valast->value.vint = strtoul (lex->_clt, NULL, 10);
 			break;
 		case MILEX_C_MIXED:
 			// check NIL (None)
-			break;
-		case MILEX_C_QUOTE:
-			// must trow exception
 			break;
 		case MILEX_C_TUPLE:
 			// check NULL "[]"

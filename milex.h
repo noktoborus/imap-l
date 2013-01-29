@@ -28,13 +28,13 @@
 #define MILEX_C_LIST   0x3
 #define MILEX_C_TUPLE  0x4
 
-struct milex_value
+struct milex_value_t
 {
 	uint8_t type;
 	size_t size;
 	union
 	{
-		struct milex_value *list;
+		struct milex_value_t *list;
 		char *vstring;
 		uint32_t vint;
 	} value;
@@ -42,11 +42,11 @@ struct milex_value
 
 struct milex
 {
-	struct milex_value *valast; // pointer to last node
+	struct milex_value_t *valast; // pointer to last node
 	char *_clt; // collect buffer
 	size_t _clt_fl;
 	size_t _clt_sz;
-	struct milex_value value;
+	struct milex_value_t value;
 	uint8_t state;
 	// TODO: remove _clt_type, use state for detect type (MILEX_LIST | MILEX_OK as example)
 	uint8_t _clt_type; // collect type

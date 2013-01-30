@@ -3,39 +3,88 @@
  */
 #include "milex.h"
 
+bool
+milex_value_enlarge (struct milex_value_t *vlist)
+{
+	struct milex_value_t **vtmp;
+	if (vlist->type != MILEX_T_LIST)
+		return false;
+	if (vlist->max <= vlist->size)
+	{
+		vtmp = realloc ((void *)vlist->value.list, sizeof (struct milex_value_t *) * (vlist->size + MILEX_BLVL));
+		if (vtmp)
+		{
+			memset ((void *)&(vtmp[vlist->size - 1]), 0, MILEX_BLVL);
+			vlist->value.list = vtmp;
+			vlist->max = vlist->size + MILEX_BLVL;
+			return true;
+		}
+		return false;
+	}
+	else
+	{
+		return true;
+	}
+}
+
+
+/* return number of value in list */
+size_t
+milex_value_alloc (struct milex_value_t *vlist, size_t datasize, uint8_t type)
+{
+	if (vlist->type != MILEX_T_LIST)
+		return NULL;
+	// TODO: realloc list
+	vlist->value.list[vlist->size] = calloc (1, sizeof (struct milex_value_t) + datasize);
+	if (vlist->value.list[vlist->size])
+	{
+		vlist->value.list[vlist->size]->type = type;
+		if (datasize)
+			vlist->value.list[vlist->size]->value.p =\
+				(void*)(((char *)vlist->value.list[vlist->size]) + sizeof (struct milex_value_t));
+		return vlist->size ++;
+	}
+	return (size_t)-1;
+}
+
 void
 milex_parse (struct milex *lex)
 {
 	register size_t i;
+	struct milex_value_t *value = NULL;
 	// TODO: set lex->valast
 	switch (lex->_clt_type)
 	{
 		case MILEX_C_INT:
 			if (!lex->_clt_fl)
 				break;
-			lex->valast->type = MILEX_T_UINT;
-			lex->valast->value.vint = strtoul (lex->_clt, NULL, 10);
+			//lex->valast->type = MILEX_T_UINT;
+			//lex->valast->value.vint = strtoul (lex->_clt, NULL, 10);
 			break;
 		case MILEX_C_MIXED:
 			// check NIL (None)
 			break;
 		case MILEX_C_TUPLE:
 			// check NULL "[]"
+			/*
 			if (!lex->_clt_fl)
 				lex->valast->type = MILEX_T_NULL;
 			else
 			{
 				// TODO: recursive to milex_next
 			}
+			*/
 			break;
 		case MILEX_C_LIST:
 			// check NULL "()"
+			/*
 			if (!lex->_clt_fl)
 				lex->valast->type = MILEX_T_NULL;
 			else
 			{
 				// TODO: recursive to milex_next
 			}
+			*/
 			break;
 	}
 }

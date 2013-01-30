@@ -6,8 +6,10 @@
 
 #include <stdint.h>
 #include <stdlib.h>
+#include <stdbool.h>
 
 #define MILEX_BFSZ 128
+#define MILEX_BLVL 4
 
 #define MILEX_PROC 0x0
 #define MILEX_FAIL 0x1
@@ -32,9 +34,11 @@ struct milex_value_t
 {
 	uint8_t type;
 	size_t size;
+	size_t max; // use in type == MILEX_T_LIST
 	union
 	{
-		struct milex_value_t *list;
+		void *p;
+		struct milex_value_t **list;
 		char *vstring;
 		uint32_t vint;
 	} value;
@@ -42,11 +46,12 @@ struct milex_value_t
 
 struct milex
 {
-	struct milex_value_t *valast; // pointer to last node
 	char *_clt; // collect buffer
 	size_t _clt_fl;
 	size_t _clt_sz;
-	struct milex_value_t value;
+	size_t value_size;
+	size_t value_max;
+	struct milex_value_t **value;
 	uint8_t state;
 	// TODO: remove _clt_type, use state for detect type (MILEX_LIST | MILEX_OK as example)
 	uint8_t _clt_type; // collect type

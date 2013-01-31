@@ -35,16 +35,19 @@ milex_value_alloc (struct milex_value_t *vlist, size_t datasize, uint8_t type)
 	if (vlist->type != MILEX_T_LIST)
 		return NULL;
 	// TODO: realloc list
-	vlist->value.list[vlist->size] = calloc (1, sizeof (struct milex_value_t) + datasize);
+	// alloc new node, add 1 byte for \0 if string
+	vlist->value.list[vlist->size] = calloc (1, sizeof (struct milex_value_t) + datasize + (type == MILEX_T_STRING ? 1 : 0));
 	if (vlist->value.list[vlist->size])
 	{
 		vlist->value.list[vlist->size]->type = type;
 		vlist->value.list[vlist->size]->size = datasize;
-		if (datasize)
+		// set size for value, if present
+		if (datasize || type == MILEX_T_STRING)
 			vlist->value.list[vlist->size]->value.p =\
 				(void*)(((char *)vlist->value.list[vlist->size]) + sizeof (struct milex_value_t));
 		return vlist->size ++;
 	}
+	// return unknown value
 	return (size_t)-1;
 }
 

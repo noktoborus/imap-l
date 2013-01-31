@@ -39,6 +39,7 @@ milex_value_alloc (struct milex_value_t *vlist, size_t datasize, uint8_t type)
 	if (vlist->value.list[vlist->size])
 	{
 		vlist->value.list[vlist->size]->type = type;
+		vlist->value.list[vlist->size]->size = datasize;
 		if (datasize)
 			vlist->value.list[vlist->size]->value.p =\
 				(void*)(((char *)vlist->value.list[vlist->size]) + sizeof (struct milex_value_t));

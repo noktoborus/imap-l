@@ -54,7 +54,7 @@ milex_value_alloc (struct milex_value_t *vlist, size_t datasize, uint8_t type)
 void
 milex_parse (struct milex *lex)
 {
-	register size_t i;
+	register size_t no;
 	struct milex_value_t *value = NULL;
 	// TODO: set lex->valast
 	switch (lex->_clt_type)

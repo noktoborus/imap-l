@@ -49,9 +49,7 @@ struct milex
 	char *_clt; // collect buffer
 	size_t _clt_fl;
 	size_t _clt_sz;
-	size_t value_size;
-	size_t value_max;
-	struct milex_value_t **value;
+	struct milex_value_t *value;
 	uint8_t state;
 	// TODO: remove _clt_type, use state for detect type (MILEX_LIST | MILEX_OK as example)
 	uint8_t _clt_type; // collect type

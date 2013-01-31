@@ -32,9 +32,9 @@ milex_value_enlarge (struct milex_value_t *vlist)
 size_t
 milex_value_alloc (struct milex_value_t *vlist, size_t datasize, uint8_t type)
 {
-	if (vlist->type != MILEX_T_LIST)
-		return NULL;
-	// TODO: realloc list
+	// check current node, try realloc
+	if (vlist->type != MILEX_T_LIST || !milex_value_enlarge (vlist))
+		return (size_t)-1;
 	// alloc new node, add 1 byte for \0 if string
 	vlist->value.list[vlist->size] = calloc (1, sizeof (struct milex_value_t) + datasize + (type == MILEX_T_STRING ? 1 : 0));
 	if (vlist->value.list[vlist->size])
